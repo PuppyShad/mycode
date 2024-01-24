@@ -13,9 +13,9 @@ if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
 
-// Get the username and uuid from the POST request
+// Get the username and UUID from the POST request
 $username = $_POST['username'];
-$uuid = $_POST['uuid'] ?? ''; // Fallback to empty string if uuid is not set
+$uuid = $_POST['uuid']; // Assuming UUID is sent via POST
 
 // Generate a random 10-character password
 $password = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 10);
@@ -24,14 +24,14 @@ $password = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKL
 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
 // Prepare and bind
-$stmt = $mysqli->prepare("INSERT INTO users (username, uuid, password) VALUES (?, ?, ?)");
-$stmt->bind_param("sss", $username, $uuid, $hashed_password);
+$stmt = $mysqli->prepare("INSERT INTO users (username, password, uuid) VALUES (?, ?, ?)");
+$stmt->bind_param("sss", $username, $hashed_password, $uuid);
 
 // Execute
 $stmt->execute();
 
 // Send a success message
-echo "Welcome! Your account has been created. Your username is $username. and your password is $password";
+echo "Welcome! Your account has been created. Your username is $username.";
 
 $stmt->close();
 $mysqli->close();
